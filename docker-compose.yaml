@@ -1,0 +1,41 @@
+version: "3.3"
+
+services:
+  frontend-erua:
+    image: sthanasis/erua-client
+    container_name: frontend-erua
+    ports:
+      - 80:80
+
+  backend-erua:
+    image: sthanasis/erua-backend
+    container_name: backend-erua
+    depends_on:
+      - db-erua
+    environment:
+      - DB_HOST=db-erua:5432
+      - DB_NAME=test_db
+      - DB_USERNAME=root
+      - DB_PASSWORD=30a301d7257
+    volumes:
+      - erua_data:/data
+    ports:
+      - '8080:8080'
+
+  db-erua:
+    image: postgres:14.7
+    container_name: db-erua
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: 30a301d7257
+      POSTGRES_DB: test_db
+    volumes:
+      - postgresql:/var/lib/postgresql
+      - postgresql_data:/var/lib/postgresql/data
+    ports:
+      - '5455:5432'
+
+volumes:
+  postgresql:
+  postgresql_data:
+  erua_data:

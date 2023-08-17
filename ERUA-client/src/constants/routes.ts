@@ -1,0 +1,12 @@
+export const HOME = 'Communities and Cluster';
+export const SHOP = 'Science Shop';
+export const REGION = 'Regions';
+export const LOGIN = 'Login';
+export const REGISTER = 'Register';
+export const HUB = 'Creative Hub';
+export const PANEL = 'Admin Panel';
+export const PROFILE = 'User Profile';
+export const TOOLS = 'Supporting Tools';
+export const NEWS = 'News and Events';
+export const KNOWLEDGE = 'Open Knowledge';
+export const EXHIBITION = 'Exhibition';

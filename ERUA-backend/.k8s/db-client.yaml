@@ -1,0 +1,43 @@
+# Configure 'Deployment' of postgresql server
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgresqlclient
+  labels:
+    app: postgresqlclient
+spec:
+  selector: # postgresql Pod Should contain same labels
+    matchLabels:
+      app: postgresqlclient
+  template:
+    metadata:
+      labels: # Must match 'Service' and 'Deployment' selectors
+        app: postgresqlclient
+    spec:
+      containers:
+        - image: dpage/pgadmin4:6.21
+          name: pgadmin
+          env:
+            - name: PGADMIN_DEFAULT_EMAIL
+              value: admin@admin.com
+            - name: PGADMIN_DEFAULT_PASSWORD
+              value: 30a301d7257123
+          ports:
+            - containerPort: 80
+              name: pgadmin
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgresql-client # DNS name
+  labels:
+    app: postgresqlclient
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+      nodePort: 30012
+  selector:
+    app: postgresqlclient
+  type: NodePort

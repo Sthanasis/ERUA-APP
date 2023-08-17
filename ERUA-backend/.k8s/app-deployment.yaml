@@ -1,0 +1,75 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: service-pv-claim
+  labels:
+    app: erua-service
+spec:
+  accessModes:
+    - ReadOnlyMany
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: service-pv
+  labels:
+    app: erua-service
+spec:
+  accessModes:
+    - ReadOnlyMany
+  capacity:
+    storage: 2Gi
+  hostPath:
+    path: /home/administrator/service
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: erua-service-deployment
+spec:
+  selector:
+    matchLabels:
+      app: erua-service
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: erua-service
+    spec:
+      containers:
+        - name: erua-service
+          image: $IMAGE
+          ports:
+            - containerPort: 8080
+          env:   # Setting Enviornmental Variables
+            - name: DB_HOST
+              value: postgresql
+            - name: DB_NAME
+              value: test_db
+            - name: DB_USERNAME
+              value: root
+            - name: DB_PASSWORD
+              value: 30a301d7257123
+          volumeMounts:
+            - name: service-persistent-storage
+              mountPath: /data
+      volumes:
+        - name: service-persistent-storage
+          persistentVolumeClaim:
+            claimName: service-pv-claim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: erua-service-svc
+spec:
+  selector:
+    app: erua-service
+  ports:
+    - protocol: "TCP"
+      port: 8080
+      targetPort: 8080
+  type: NodePort # type of the service.

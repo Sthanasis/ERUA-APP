@@ -1,0 +1,30 @@
+{
+  "parser": "vue-eslint-parser",
+  "parserOptions": {
+    "parser": "@typescript-eslint/parser",
+    "sourceType": "module"
+  },
+  "env": {
+    "browser": true
+  },
+  "ignorePatterns": ["public/maps/**"],
+  "plugins": ["@typescript-eslint"],
+  "extends": ["plugin:vue/vue3-recommended"],
+  "rules": {
+    "no-console": 1,
+    "no-use-before-define": 2,
+    "no-var": 2,
+    "no-unneeded-ternary": 2,
+    "no-nested-ternary": 2,
+    "no-debugger": 2,
+    "vue/multi-word-component-names": 0,
+    "vue/singleline-html-element-content-newline": 0,
+    "@typescript-eslint/no-unused-vars": 2,
+    "vue/valid-v-slot": ["error", { "allowModifiers": true }]
+  },
+  "settings": {
+    "vue": {
+      "version": "detect"
+    }
+  }
+}

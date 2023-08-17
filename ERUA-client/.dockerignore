@@ -1,0 +1,9 @@
+Dockerfile
+node_modules
+.git
+.dockerignore
+.gitignore
+Readme.md
+.prettierrc
+.vscode
+.DS_Store

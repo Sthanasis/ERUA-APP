@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: client-deployment
+  labels:
+    group: erua
+spec:
+  selector:
+    matchLabels:
+      app: erua
+      tier: frontend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: erua
+        tier: frontend
+    spec:
+      nodeSelector:
+        name: erua
+      containers:
+        - name: erua-client
+          image: $IMAGE
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+              name: erua-client
+      imagePullSecrets:
+        - name: dockerhub-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: erua-service
+  labels:
+    app: erua
+    tier: frontend
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+      name: http
+    - port: 443
+      protocol: TCP
+      name: https
+  externalIPs:
+    - $IP
+  selector:
+    app: erua
+  type: LoadBalancer

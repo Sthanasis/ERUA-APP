@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgresql
+  labels:
+    app: postgresql
+    tier: database
+spec:
+  selector: # postgresql Pod Should contain same labels
+    matchLabels:
+      app: postgresql
+      tier: database
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels: # Must match 'Service' and 'Deployment' selectors
+        app: postgresql
+        tier: database
+    spec:
+      containers:
+        - image: postgres:14.7
+          name: postgresql
+          env:
+            - name: POSTGRES_USER
+              value: root
+            - name: POSTGRES_PASSWORD
+              value: 30a301d7257123
+            - name: POSTGRES_DB
+              value: test_db
+          ports:
+            - containerPort: 5432
+              name: postgresql
+          volumeMounts: # Mounting voulume obtained from Persistent Volume Claim
+            - name: postgresql-persistent-storage
+              mountPath: /var/lib/postgresql/data #This is the path in the container on which the mounting will take place.
+      volumes:
+        - name: postgresql-persistent-storage # Obtaining 'vloume' from PVC
+          persistentVolumeClaim:
+            claimName: postgresql-pv-claim
+---
+# Define a 'Service' To Expose postgresql to Other Services
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgresql # DNS name
+  labels:
+    app: postgresql
+    tier: database
+spec:
+  ports:
+    - port: 5432
+      targetPort: 5432
+      protocol: TCP
+      nodePort: 32701
+  selector: # postgresql Pod Should contain same labels
+    app: postgresql
+    tier: database
+  type: NodePort
