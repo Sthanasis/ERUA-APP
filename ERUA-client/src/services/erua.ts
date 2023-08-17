@@ -95,6 +95,10 @@ const deleteExhibition = async (exhibitionId: number) => {
   );
 };
 
+const deleteExhibitionImage = async (imageId: string) => {
+  return await deleteRequest(`${baseUrl}/exhibition/image?imageId=${imageId}`);
+};
+
 export const eruaMemberService = Object.freeze({
   getFriendList,
   createSolution,
@@ -111,4 +115,5 @@ export const eruaMemberService = Object.freeze({
   getExhibitionImage,
   uploadImageToExhibition,
   deleteExhibition,
+  deleteExhibitionImage,
 });

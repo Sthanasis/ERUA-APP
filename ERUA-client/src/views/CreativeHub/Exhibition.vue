@@ -11,6 +11,7 @@ import { PageAction } from '~/types/utilities';
 import CreateShowroomItemWrapper from '~/components/creative-hub/wrappers/CreateShowroomItemWrapper.vue';
 import { TInputControl } from '~/types/props';
 import ImageGridWrapper from '~/components/creative-hub/wrappers/ImageGridWrapper.vue';
+import { useUserStore } from '~/pinia/modules/user';
 
 const { params } = useRoute();
 const exhibition = ref<IExhibitionResponse>();
@@ -18,9 +19,11 @@ const imglist = ref<{ url: string; title: string }[]>([]);
 const imagesCount = computed(() =>
   exhibition.value ? exhibition.value.exhibitionImageList.length : 0
 );
-
+const user = useUserStore();
 const isUploading = ref(false);
-
+const isOwner = computed(
+  () => user.isAdmin || user.id === exhibition.value?.organizer.id
+);
 const createExhibitControls: TInputControl[] = [
   {
     name: 'name',
@@ -50,7 +53,7 @@ async function fetchExhibitionData() {
         eruaMemberService.getExhibitionImage(data.id, image.id).then((blob) => {
           if (blob) {
             const url = URL.createObjectURL(blob);
-            imglist.value.push({ url, title: image.name });
+            imglist.value.push({ url, title: image.name, id: image.id });
           }
         })
       );
@@ -75,13 +78,20 @@ async function uploadImage() {
   handleDialogClose();
   fetchExhibitionData();
 }
-const actions: PageAction[] = [
+
+async function deleteImage(id: string) {
+  await eruaMemberService.deleteExhibitionImage(id);
+  fetchExhibitionData();
+}
+
+const actions: PageAction[] = computed(() => [
   {
     name: 'Upload Exhibit',
     callback: () => (isCreateExibitDialogActive.value = true),
     color: 'primary',
+    condition: isOwner.value,
   },
-];
+]);
 
 onMounted(fetchExhibitionData);
 </script>
@@ -109,7 +119,20 @@ onMounted(fetchExhibitionData);
       </VCard>
     </template>
     <template v-else>
-      <ImageGridWrapper :images="imglist" />
+      <ImageGridWrapper :images="imglist">
+        <template
+          v-if="isOwner"
+          #actions="{ image }"
+        >
+          <VBtn
+            color="error"
+            variant="flat"
+            @click="deleteImage(image.id)"
+          >
+            Delete
+          </VBtn>
+        </template>
+      </ImageGridWrapper>
     </template>
   </FlexboxWrapper>
   <CreateShowroomItemWrapper

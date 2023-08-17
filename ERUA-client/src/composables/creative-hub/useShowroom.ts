@@ -55,9 +55,7 @@ export default function useShowroom() {
 
   async function fetchExhibitions() {
     const data = await eruaMemberService.getExhibitions();
-    if (data && data.length > 0) {
-      exhibitions.value = data;
-    }
+    if (data) exhibitions.value = data;
   }
 
   async function createExhibition() {

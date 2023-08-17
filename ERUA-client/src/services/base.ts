@@ -2,9 +2,7 @@ import { useSnackbarStore } from '~/pinia/modules/snackbar';
 import { useUserStore } from '~/pinia/modules/user';
 
 const baseUrl =
-  process.env.NODE_ENV === 'production'
-    ? '/api'
-    : 'http://195.251.210.251:31756';
+  process.env.NODE_ENV === 'production' ? '/api' : 'http://localhost:8080';
 
 export const get = async <T>(endpoint: string): Promise<T | undefined> => {
   const token = useUserStore().accessToken;

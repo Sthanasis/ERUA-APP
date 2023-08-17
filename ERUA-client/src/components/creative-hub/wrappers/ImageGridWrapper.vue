@@ -3,6 +3,7 @@ import { VRow, VCol, VImg, VProgressCircular } from 'vuetify/components';
 type ImageDataType = {
   title: string;
   url?: string;
+  id: string;
 };
 defineProps<{ images: ImageDataType[] }>();
 </script>
@@ -35,6 +36,10 @@ defineProps<{ images: ImageDataType[] }>();
           </VRow>
         </template>
       </VImg>
+      <slot
+        name="actions"
+        v-bind="{ image }"
+      />
     </VCol>
   </VRow>
 </template>
