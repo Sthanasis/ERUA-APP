@@ -12,18 +12,20 @@ import CreateShowroomItemWrapper from '~/components/creative-hub/wrappers/Create
 import { TInputControl } from '~/types/props';
 import ImageGridWrapper from '~/components/creative-hub/wrappers/ImageGridWrapper.vue';
 import { useUserStore } from '~/pinia/modules/user';
+import { ComputedRef } from 'vue';
 
 const { params } = useRoute();
 const exhibition = ref<IExhibitionResponse>();
-const imglist = ref<{ url: string; title: string }[]>([]);
+const imglist = ref<{ url: string; title: string; id: number }[]>([]);
 const imagesCount = computed(() =>
   exhibition.value ? exhibition.value.exhibitionImageList.length : 0
 );
 const user = useUserStore();
-const isUploading = ref(false);
 const isOwner = computed(
   () => user.isAdmin || user.id === exhibition.value?.organizer.id
 );
+const isUploading = ref(false);
+
 const createExhibitControls: TInputControl[] = [
   {
     name: 'name',
@@ -63,6 +65,10 @@ async function fetchExhibitionData() {
 
 function handleDialogClose() {
   isCreateExibitDialogActive.value = false;
+  exhibit.value = {
+    name: '',
+    file: null,
+  };
 }
 
 async function uploadImage() {
@@ -79,12 +85,12 @@ async function uploadImage() {
   fetchExhibitionData();
 }
 
-async function deleteImage(id: string) {
+async function deleteImage(id: number) {
   await eruaMemberService.deleteExhibitionImage(id);
   fetchExhibitionData();
 }
 
-const actions: PageAction[] = computed(() => [
+const actions: ComputedRef<PageAction[]> = computed(() => [
   {
     name: 'Upload Exhibit',
     callback: () => (isCreateExibitDialogActive.value = true),

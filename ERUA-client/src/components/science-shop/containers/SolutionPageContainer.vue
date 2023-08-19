@@ -65,6 +65,14 @@ const actions = computed<PageAction[]>(() => [
     color: 'primary',
   },
 ]);
+
+function handleCloseDialog() {
+  setIsDialogVisible(false);
+  formData.name = null;
+  formData.description = null;
+  formData.typeOfSolution = null;
+}
+
 async function handleDeleteSolution() {
   if (selectedSolution.value) {
     const id = selectedSolution.value.id;
@@ -95,7 +103,7 @@ async function handleLinkSuggestion(item: IStakeholderProblem) {
 }
 async function handleSubmit() {
   await eruaMemberService.createSolution(formData as ISolutionPayload);
-  setIsDialogVisible(false);
+  handleCloseDialog();
   await fetchData();
 }
 </script>
@@ -134,7 +142,7 @@ async function handleSubmit() {
   />
   <DialogWrapper
     :open="isDialogVisible"
-    @on-close="setIsDialogVisible(false)"
+    @on-close="handleCloseDialog"
   >
     <template #title>New Solution</template>
     <FormWrapper

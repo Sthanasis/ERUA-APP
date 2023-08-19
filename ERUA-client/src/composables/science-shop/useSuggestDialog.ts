@@ -1,4 +1,5 @@
 import { ref } from 'vue';
+import { storeToRefs } from 'pinia';
 import { IEruaMemberSolution, IStakeholderProblem } from '~/types/responseData';
 import { eruaMemberService } from '~/services/erua';
 import { stakeholderService } from '~/services/stakeholders';
@@ -11,14 +12,15 @@ type SuggestionsType =
 export const useSuggestDialog = () => {
   const isSuggestDialogActive = ref(false);
   const suggestions = ref<SuggestionsType>([]);
-  const { isProblem, isSolution } = useScienceShop();
+  const store = useScienceShop();
+  const { isSolution, isProblem } = storeToRefs(store);
 
   async function fetchSuggestions(id: number) {
     let data: SuggestionsType = [];
-    if (isSolution) {
+    if (isSolution.value) {
       data = await eruaMemberService.getUnlinkedProblemsBySolution(id);
     }
-    if (isProblem) {
+    if (isProblem.value) {
       data = await stakeholderService.getUnlinkedSolutionsByProblem(id);
     }
     if (data) suggestions.value = data;
@@ -38,6 +40,7 @@ export const useSuggestDialog = () => {
     }
     closeSuggestionDialog();
   }
+
   return {
     isSuggestDialogActive,
     suggestions,

@@ -59,6 +59,13 @@ const inputControls: TInputControl[] = [
 async function handleSearch(v: string) {
   await fetchData(v);
 }
+
+function handleCloseDialog() {
+  formData.name = null;
+  formData.description = null;
+  formData.keywordList = [];
+}
+
 const { debounceFunction: debounceSearch } = useDebounce(handleSearch);
 
 const actions = computed<PageAction[]>(() => [
@@ -69,9 +76,10 @@ const actions = computed<PageAction[]>(() => [
     color: 'primary',
   },
 ]);
+
 async function handleSubmit() {
   await stakeholderService.createProblem(formData as IProblemPayload);
-  setIsDialogVisible(false);
+  handleCloseDialog();
   await fetchData();
 }
 function loadSuggestions() {
@@ -132,7 +140,7 @@ async function handleDeleteProblem() {
   />
   <DialogWrapper
     :open="isDialogVisible"
-    @on-close="setIsDialogVisible(false)"
+    @on-close="handleCloseDialog"
   >
     <template #title> New Problem </template>
     <FormWrapper

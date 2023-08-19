@@ -19,5 +19,3 @@ The backend is configured to run on port 8080
 
 A swagger exists in order to document the services that are implemented on the backend.
 You can access swagger json version by visiting <host-ip>:8080/api, or you can access the swagger ui by visiting <host-ip>:8080/api-ui
-
-The app needs to run in order to view swagger.

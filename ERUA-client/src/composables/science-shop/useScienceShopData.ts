@@ -1,3 +1,4 @@
+import { storeToRefs } from 'pinia';
 import { onMounted, ref } from 'vue';
 import { useScienceShop } from '~/pinia/modules/scienceShop';
 import { eruaMemberService } from '~/services/erua';
@@ -11,21 +12,25 @@ type DataType = IEruaMemberSolution[] | IStakeholderProblem[];
 export const useScienceShopData = () => {
   const data = ref<DataType>([]);
   const loading = ref(false);
-  const { isProblem, isSolution } = useScienceShop();
-  async function fetchData(args?: any) {
+  const store = useScienceShop();
+  const { isProblem, isSolution } = storeToRefs(store);
+  async function fetchSolutions(search?: string) {
+    const response = await eruaMemberService.getAllSolutions(search);
+    if (response?.solutions) data.value = response?.solutions;
+  }
+  async function fetchProblems(search?: string) {
+    const response = await stakeholderService.getAllProblems(search);
+    if (response?.solutions) data.value = response?.solutions;
+  }
+  async function fetchData(args?: string) {
     loading.value = true;
+
     try {
-      let response;
-      if (isProblem) {
-        response = await stakeholderService.getAllProblems(args);
-      }
-      if (isSolution) {
-        response = await eruaMemberService.getAllSolutions(args);
-      }
-      if (response?.solutions) {
-        data.value = response?.solutions;
-      }
-    } catch (err) {}
+      if (isProblem.value) await fetchProblems(args);
+      if (isSolution.value) await fetchSolutions(args);
+    } catch (err) {
+      console.error(err);
+    }
 
     loading.value = false;
   }

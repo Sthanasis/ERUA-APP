@@ -20,7 +20,7 @@ services:
     volumes:
       - erua_data:/data
     ports:
-      - '8080:8080'
+      - 8080:8080
 
   db-erua:
     image: postgres:14.7
@@ -33,7 +33,19 @@ services:
       - postgresql:/var/lib/postgresql
       - postgresql_data:/var/lib/postgresql/data
     ports:
-      - '5455:5432'
+      - 5455:5432
+
+  pgadmin:
+    container_name: pgadmin4_container
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+      PMA_HOST: db
+      PMA_PORT: 5432
+    ports:
+      - 5151:80
 
 volumes:
   postgresql:

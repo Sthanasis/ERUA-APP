@@ -19,5 +19,5 @@ export const useScienceShop = defineStore('scienceShop', () => {
     sienceShopItem.value = item;
   }
 
-  return { isSolution, isProblem, setSienceShopItem };
+  return { sienceShopItem, isSolution, isProblem, setSienceShopItem };
 });
